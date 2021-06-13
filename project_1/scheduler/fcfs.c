@@ -4,23 +4,44 @@
 #include <signal.h>
 #include <unistd.h>
 
-static void sig_alrm(int);
+void sig_alrm(int);
 static sigjmp_buf jmp_buf_stack[255];
+static sigjmp_buf scheduler;
 static int num_process;
 static int curr_process;
 static int first_run;
 
+void run_process();
 
 int main(void){
-    //add +1 to the specified processes to get +1
     printf("Setting up the system\n");
-    num_process = 5 +1 ;
+    num_process = 5;
     curr_process = 0;
     first_run = 1;
     printf("Setting up the alarm\n");
     signal(SIGALRM, sig_alrm);
-    printf("Activating the alarm now\n");
-    alarm(1);
+
+    curr_process = -1;
+    sigsetjmp(scheduler, 1);
+
+    if(first_run){
+        curr_process++;
+        if(curr_process == num_process -1 ) first_run = 0;
+        printf("First Run. Running process:%d\n", curr_process);
+        alarm(5);
+        run_process();
+    }
+    else{
+        //Round robin current process
+        //Process #0 might be avoided cause it is the main loop. 
+        curr_process = (curr_process == num_process - 1) ? 0 : curr_process + 1;
+        printf("Running process:%d\n", curr_process);
+        alarm(5);
+        siglongjmp(jmp_buf_stack[curr_process],1);
+        
+
+    }
+
     while(1);
 }
 
@@ -33,27 +54,9 @@ void run_process(){
     }
 }
 
-static void sig_alrm(int signo){
+void sig_alrm(int signo){
+    
     printf("Timer Expired\n");
-    if(!sigsetjmp(jmp_buf_stack[curr_process],1)){
-        if(first_run){
-            curr_process++;
-            if(curr_process == num_process){
-                first_run = 0;
-            }
-            printf("First Run. Running process:%d\n", curr_process);
-            alarm(1);
-            run_process();
-        }
-        else{
-            //Round robin current process
-            //Process #0 might be avoided cause it is the main loop. 
-            curr_process = (curr_process == num_process) ? 0 : curr_process + 1;
-            printf("Running process:%d\n", curr_process);
-            alarm(1);
-            siglongjmp(jmp_buf_stack[curr_process],1);
-
-        }
-    }
+    if(!sigsetjmp(jmp_buf_stack[curr_process],1)) siglongjmp(scheduler,1);
 }
 
