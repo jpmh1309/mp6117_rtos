@@ -2,6 +2,8 @@
 
 typedef struct {
   int number_process;
+  gchar *algorithm;
+  gchar *operation_mode;
 } point;
 
 
@@ -43,7 +45,8 @@ static void table_content(GtkGrid *grid,
   {
     int y = 2+i;
     // DISPLAY INFORMATION
-    label = gtk_label_new("PID 001");
+    gchar *text = g_strdup_printf("PID %i", i);
+    label = gtk_button_new_with_label(text);
     gtk_grid_attach (GTK_GRID (grid), label, 0, y, 2, 1);
 
     /*Create a progressbar and add it to the window*/
@@ -56,13 +59,16 @@ static void table_content(GtkGrid *grid,
     /*Fill in the given fraction of the bar. Has to be between 0.0-1.0 inclusive*/
     gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (progress_bar), fraction);
 
+    // gtk_progress_set_percentage (GTK_PROGRESS (pdata->progressbar),
+    //                              pvalue);
+
     /*Use the created fill function every 500 milliseconds*/
     g_timeout_add (500, fill, GTK_PROGRESS_BAR (progress_bar));
 
-    label = gtk_label_new("3.12222");
+    label = gtk_button_new_with_label("3.12222");
     gtk_grid_attach (GTK_GRID (grid), label, 6, y, 2, 1);
 
-    label = gtk_label_new("10%");
+    label = gtk_button_new_with_label("10%");
     gtk_grid_attach (GTK_GRID (grid), label, 8, y, 2, 1);
   }
 }
@@ -74,6 +80,8 @@ static void activate(GtkApplication *app,
   GtkWidget *grid;
   GtkWidget *label;
   GtkWidget *button;
+  GdkColor color;
+  // GtkWidget *box;
 
   // cast the user_data to an array of Points.
   point* data = (point*) user_data;
@@ -164,14 +172,65 @@ static void activate(GtkApplication *app,
   // TABLE CONTENT
   table_content(GTK_GRID (grid), data->number_process);
 
+  // box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 2);
+  // gtk_grid_attach (GTK_GRID (grid), label, 0, 2+data->number_process, 10, 1);
+
+
+
   // QUIT Button
-  button = gtk_button_new_with_label ("Quit");
+  button = gtk_button_new_with_label ("CURRENT PROCESS:");
+
+  /* Place the Quit button in the grid cell (0, 1), and make it
+   * span 2 columns.
+   */
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 2+data->number_process, 5, 1);
+
+  // QUIT Button
+  button = gtk_button_new_with_label ("PID 001");
+
+  /* Place the Quit button in the grid cell (0, 1), and make it
+   * span 2 columns.
+   */
+  gtk_grid_attach (GTK_GRID (grid), button, 5, 2+data->number_process, 5, 1);
+
+  button = gtk_button_new_with_label ("ALGORITHM:");
+
+  /* Place the Quit button in the grid cell (0, 1), and make it
+   * span 2 columns.
+   */
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 3+data->number_process, 5, 1);
+
+  // QUIT Button
+  button = gtk_button_new_with_label (data->algorithm);
+
+  /* Place the Quit button in the grid cell (0, 1), and make it
+   * span 2 columns.
+   */
+  gtk_grid_attach (GTK_GRID (grid), button, 5, 3+data->number_process, 5, 1);
+
+  button = gtk_button_new_with_label ("OPERATION MODE:");
+
+  /* Place the Quit button in the grid cell (0, 1), and make it
+   * span 2 columns.
+   */
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 4+data->number_process, 5, 1);
+
+  // QUIT Button
+  button = gtk_button_new_with_label (data->operation_mode);
+
+  /* Place the Quit button in the grid cell (0, 1), and make it
+   * span 2 columns.
+   */
+  gtk_grid_attach (GTK_GRID (grid), button, 5, 4+data->number_process, 5, 1);
+
+  // QUIT Button
+  button = gtk_button_new_with_label ("QUIT");
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), window);
 
   /* Place the Quit button in the grid cell (0, 1), and make it
    * span 2 columns.
    */
-  gtk_grid_attach (GTK_GRID (grid), button, 4, 2+data->number_process, 2, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 4, 5+data->number_process, 2, 1);
 
   /* Now that we are done packing our widgets, we show them all
    * in one go, by calling gtk_widget_show_all() on the window.
@@ -187,7 +246,7 @@ int main (int    argc, char **argv)
   GtkApplication *app;
   int status;
 
-  point data = {3};
+  point data = {15, "LOTTERY SCHEDULING", "PREEMPTIVE"};
 
   app = gtk_application_new ("org.gtk.example", G_APPLICATION_FLAGS_NONE);
   g_signal_connect (app, "activate", G_CALLBACK (activate), &data);
