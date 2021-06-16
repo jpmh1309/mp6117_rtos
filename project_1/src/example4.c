@@ -23,7 +23,9 @@ void create(int i)
 {
 if (sigsetjmp(context[i], 1)) {
 child(&crt);
+printf("E\n");
 } else {
+printf("D\n");
 char stack[1024];
 siglongjmp(context[0], -1);
 }
@@ -54,11 +56,14 @@ signal(SIGALRM, handler);
 alarm(1);
 
 if (!sigsetjmp(context[0], 1)) {
+printf("A\n");
 create(1);
 }
 if (!sigsetjmp(context[0], 1)) {
+printf("B\n");
 create(2);
 }
+printf("C\n");
 parent();
 
 }

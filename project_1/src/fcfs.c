@@ -3,6 +3,7 @@
 #include <setjmp.h>
 #include <signal.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <math.h>
 
 sigjmp_buf * env;
@@ -26,9 +27,14 @@ double arcsin(double x, int n)
   return 2*sum;
 }
 
-void execute_thread(int pid)
+void execute_thread()
 {
-  printf("Process ID: \n", pid);
+  printf("Process ID: %d\n", current);
+  if (!sigsetjmp(env[current], 1)) {
+    current++;
+    if(current == 5) current = 0;
+    siglongjmp(env[current], -1);
+  }
 }
 
 // void switch_thread()
@@ -36,20 +42,47 @@ void execute_thread(int pid)
 //
 // }
 
+void parent()
+{
+while(1)
+fprintf(stderr, "Parent process\n");
+}
+
+void child(int *i)
+{
+while(1)
+fprintf(stderr, "Child process %d\n", *i);
+}
+
+/* create child context and return to parent */
+void create_thread(int i)
+{
+  if (sigsetjmp(env[i], 1)) {
+    child(&current);
+    printf("E\n");
+  } else {
+    printf("D\n");
+    char stack[1024];
+    siglongjmp(env[0], -1);
+  }
+}
+
 void thread_setup(int num_threads)
 {
-  for (int i = 0; i < num_threads; i++)
+  for (int i = 0; i < num_threads-1; i++)
   {
-    if (!sigsetjmp(env[i], 1)) {
-    create(1);
+    if (!sigsetjmp(env[0], 1)) {
+      create_thread(i+1);
     }
   }
 }
 
 void fcfs_scheduler()
 {
+  signal(SIGALRM, fcfs_scheduler);
+  alarm(1);
 
-
+  execute_thread();
 }
 
 int main(void)
@@ -59,7 +92,10 @@ int main(void)
   current = 0;
   env = malloc(num_threads * sizeof(sigjmp_buf));
 
+  signal(SIGALRM, fcfs_scheduler);
+  alarm(1);
+
   thread_setup(num_threads);
 
-  return 0;
+  parent();  
 }
