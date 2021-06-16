@@ -241,11 +241,9 @@ static void activate(GtkApplication *app,
 
 }
 
-int main (int    argc, char **argv)
-{
-  GtkApplication *app;
+int init_gtk(int argc, char **argv) {
   int status;
-
+  GtkApplication *app;
   point data = {15, "LOTTERY SCHEDULING", "PREEMPTIVE"};
 
   app = gtk_application_new ("org.gtk.example", G_APPLICATION_FLAGS_NONE);
@@ -254,4 +252,9 @@ int main (int    argc, char **argv)
   g_object_unref (app);
 
   return status;
+}
+
+int main (int argc, char **argv)
+{
+  return init_gtk(argc, argv);
 }
