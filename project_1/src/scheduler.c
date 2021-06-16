@@ -18,7 +18,8 @@ struct scheduler_config{
   int bills;
 };
 
-enum thread_state {
+enum thread_state{
+  MAIN,
   READY,
   WAITING,
   RUNNING,
@@ -35,43 +36,51 @@ struct thread{
   enum thread_state state;
 };
 
-// void thread_create(void *function, struct thread_metadata data)
-// {
-//   thread_counter++;
-//   address_t sp, pc;
-//
-//   list_of_threads[thread_counter].id = thread_counter;
-//   list_of_threads[thread_counter].function = function;
-//   list_of_threads[thread_counter].data = data;
-//   list_of_threads[thread_counter].state = READY;
-// 	list_of_threads[thread_counter].data.actual_workload = 0;
-//
-//   sp = (address_t)list_of_threads[thread_counter].stack + STACK_SIZE - sizeof(address_t);
-//   pc = (address_t)list_of_threads[thread_counter].function;
-//
-//   sigsetjmp(list_of_threads[thread_counter].env,1);
-//   (list_of_threads[thread_counter].env->__jmpbuf)[JB_SP] = translate_address(sp);
-//   (list_of_threads[thread_counter].env->__jmpbuf)[JB_PC] = translate_address(pc);
-//   sigemptyset(&list_of_threads[thread_counter].env->__saved_mask);
-// }
-
-void scheduler_setup(struct scheduler_config config,
-                     struct thread *scheduler_thread)
+void arcsin()
 {
-  for(int i = 0; i < config.num_threads; i++)
+
+}
+
+void threads_create(void *function,
+                   struct scheduler_config config,
+                   struct thread *scheduler_thread)
+{
+  address_t sp, pc;
+
+  for(int i = 1; i < config.num_threads; i++)
   {
     scheduler_thread[i].pid = i;
-    scheduler_thread[i].function = NULL;
+    scheduler_thread[i].function = function;
     scheduler_thread[i].pi = 0.0;
+    scheduler_thread[i].state = READY;
+
+    sp = (address_t)scheduler_thread[i].stack + STACK_SIZE - sizeof(address_t);
+    pc = (address_t)scheduler_thread[i].function;
+
     sigsetjmp(scheduler_thread[i].env,1);
+    (scheduler_thread[i].env->__jmpbuf)[JB_SP] = translate_address(sp);
+    (scheduler_thread[i].env->__jmpbuf)[JB_PC] = translate_address(pc);
+    sigemptyset(&scheduler_thread[i].env->__saved_mask);
   }
+}
+
+void main_thread_create(struct thread *scheduler_thread)
+{
+  // for(int i = 0; i < config.num_threads; i++)
+  // {
+  scheduler_thread[0].pid = 0;
+  scheduler_thread[0].function = NULL;
+  scheduler_thread[0].state = MAIN;
+  sigsetjmp(scheduler_thread[0].env, 1);
+  // }
 }
 
 void config_get(struct scheduler_config *config)
 {
   config->algorithm = "FCFS";
   config->operation_mode = "PREEMPTIVE";
-  config->num_threads = 20;
+  // Main Thread + Number of Threads
+  config->num_threads = 5;
   config->quantum = 1000;
 }
 
@@ -92,7 +101,8 @@ int main(int argc, char **argv)
   for(int i = 0; i < config.num_threads; i++)
     printf("%d\n", scheduler_thread[i].pid);
 
-  scheduler_setup(config, scheduler_thread);
+  // Main thread setup
+  main_thread_create(scheduler_thread);
 
   // for(int i = 0; i < num_threads; i++)
   //   scheduler_thread[i].pid = i;
@@ -100,6 +110,14 @@ int main(int argc, char **argv)
   for(int i = 0; i < config.num_threads; i++)
     printf("%d\n", scheduler_thread[i].pid);
 
+  threads_create(arcsin, config, scheduler_thread);
+
+  for(int i = 0; i < config.num_threads; i++)
+  {
+    printf("pid %d state %d \n", scheduler_thread[i].pid, scheduler_thread[i].state);
+  }
+
+  //
   // for (size_t i = 1; i < number_of_threads+1; i++) {
 	// 	thread_generic_tmp.workload = thread_workloads[i-1];
 	//   thread_generic_tmp.bills = thread_bills[i-1];

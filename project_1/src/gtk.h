@@ -6,7 +6,6 @@ typedef struct {
   gchar *operation_mode;
 } point;
 
-
 static void print_hello(GtkWidget *widget,
                         gpointer   data)
 {
