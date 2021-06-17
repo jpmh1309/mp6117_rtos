@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <math.h>
 #include "address.h"
+#include <yaml.h>
 
 #define STACK_SIZE 4096
 
@@ -16,6 +17,8 @@ struct scheduler_config{
   int num_threads;
   int quantum;
   int bills;
+  int arrival_time;
+  int work_load;
 };
 
 enum thread_state{
@@ -77,11 +80,44 @@ void main_thread_create(struct thread *scheduler_thread)
 
 void config_get(struct scheduler_config *config)
 {
-  config->algorithm = "FCFS";
-  config->operation_mode = "PREEMPTIVE";
+  char * algorithm = malloc(sizeof(char)*255);
+  char * operation_mode = malloc(sizeof(char)*255);
+  int process_num;
+  int arrival_time;
+  int work_load;
+  int bills;
+  int quantum;
+
+  FILE *fp = fopen("config.txt", "r");
+
+  int i = 0;
+  fscanf (fp, "%s", algorithm);
+  fscanf (fp, "%s", operation_mode);      
+  fscanf (fp, "%d", &process_num);      
+  fscanf (fp, "%d", &arrival_time);      
+  fscanf (fp, "%d", &work_load);      
+  fscanf (fp, "%d", &bills);      
+  fscanf (fp, "%d", &quantum);      
+  fclose (fp);
+
+  
+  config->algorithm = algorithm;
+  config->operation_mode = operation_mode;
+  config->num_threads= process_num;
+  config->arrival_time = arrival_time;
+  config->work_load = work_load;
+  config->bills = bills;
+  
   // Main Thread + Number of Threads
   config->num_threads = 5;
   config->quantum = 1000;
+
+  printf("config->algorithm: %s\n", config->algorithm);
+  printf("config->operation_mode: %s\n", config->operation_mode);
+  printf("config->num_threads: %d\n", config->num_threads);
+  printf("config->arrival_time: %d\n", config->arrival_time);
+  printf("config->work_load: %d\n", config->work_load);
+  printf("config->bills: %d\n", config->bills);
 }
 
 int main(int argc, char **argv)
