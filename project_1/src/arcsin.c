@@ -12,7 +12,7 @@ long double arcsin(long double x, int n)
   long double a = 0;
   int i = 0;
   long double sum = 0;
-  a = x;
+  // a = x;
   for (int i = 1; i <= n; i++) {
     sum += a;
     a = next(a, x, i);
