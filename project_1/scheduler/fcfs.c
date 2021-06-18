@@ -69,18 +69,31 @@ void create_process(void * function, int p){
         processes[p].state = MAIN;
 }
 void update_tickets(int process, int lottery_ticket){
+    printf("Ticket_copy_length: %d\n", process);
     int tickets_copy[processes[process].ticket_am];
+    printf("CHECK A\n");
     int i =0;
+    printf("CHECK B\n");
     memcpy(tickets_copy, processes[process].tickets, processes[process].ticket_am*sizeof(int));
+    printf("CHECK C\n");
     for(int j = 0; j< processes[process].ticket_am; j++){
         if(tickets_copy[j] != lottery_ticket){
             processes[process].tickets[i] = tickets_copy[j];
             i++;
         }
     }
+    printf("CHECK D\n");
     processes[process].ticket_am = i;
     //Need to implement the creation of new tickets when we are out of tickets
-
+    if(processes[process].ticket_am == 0){
+        //Create new 5 tickets.
+        for(int i = processes[process].ticket_am; i< processes[process].ticket_am +config.ticket_am; i++){
+            processes[process].tickets[i- processes[process].ticket_am ] = i;
+        }
+        processes[process].ticket_am = config.ticket_am;
+    }
+    
+    printf("CHECK E\n");
 }
 void create_all_tickets(){
     int ticket_amm = config.num_threads*config.ticket_am;
@@ -154,19 +167,32 @@ int main(void){
         int ticket_amount;
         int random_ticket_entry;
         int winner_process;
+        srand(time(NULL));
 
         create_all_tickets();
+        
         signal(SIGALRM, sig_alrm);
+
+        sigsetjmp(scheduler_buf, 1);
+        printf("Check 1\n");
         ticket_amount = get_tickets(lottery_tickets);
+        printf("Check 2\n");
         //Select a random ticket as a winner!
-        random_ticket_entry = rand()%ticket_am;
+        random_ticket_entry = rand()%ticket_amount;
         //Get the ticket owner.
+        printf("Check 3\n");
         winner_process = get_ticket_owner(lottery_tickets[random_ticket_entry]);
+        printf("Process: %d. Lottery_ticket: %d. Random Ticket Entry: %d. Ticket amount: %d\n", winner_process, lottery_tickets[random_ticket_entry], random_ticket_entry, ticket_amount);
         //Remove the ticket from the ticket queue.
         update_tickets(winner_process,lottery_tickets[random_ticket_entry]);
+        printf("Check 6\n");
         curr_process = winner_process;
+        
         ualarm(config.quantum,0);
+        printf("Process Selected: %d\n", curr_process);
+        printf("Check\n");
         run_process_fcfs();
+        
         //Initialice with Tickets.
         
 
@@ -180,7 +206,7 @@ void run_process_ls(){
 
 }
 void run_process_fcfs(){
-    //printf("being called\n");
+    
     processes[curr_process].state = RUNNING;
     while(1){
         processes[curr_process].pi += 2*( 2*pow(-1, processes[curr_process].current_workload ) / (1+2*processes[curr_process].current_workload));
