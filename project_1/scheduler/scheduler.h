@@ -94,17 +94,17 @@ void update_tickets(int process, int lottery_ticket){
         printf("update_tickets()::ticket_am: %d\n", ticket_am);
         for(int i = ticket_am; i< ticket_am + config.ticket_am; i++){
             processes[process].tickets[i- ticket_am ] = i;
-            printf("update_tickets()::processes[%d].tickets[%d]: %d\n", process, i - ticket_am, processes[process].tickets[i- ticket_am]);   
+            printf("update_tickets()::processes[%d].tickets[%d]: %d\n", process, i - ticket_am, processes[process].tickets[i- ticket_am]);
         }
         ticket_am += config.ticket_am;
         processes[process].ticket_am = config.ticket_am;
     }
-    
+
     printf("CHECK E\n");
 }
 void create_all_tickets(){
     int ticket_amm = config.num_threads*config.ticket_am;
-    int tickets[255]; 
+    int tickets[255];
     //Create tickets by acending numbers to make them unique.
     for(int i = 0; i< ticket_amm; i++) tickets[i] = i;
     //Distribute the tickets to each process.
@@ -143,7 +143,7 @@ int get_ticket_owner(int ticket){
     }
     return ticket_owner;
 }
-int main(void){
+void main_thread(void){
     printf("Setting up the system\n");
     config_get(&config);
     processes = malloc(sizeof(processes)*config.num_threads);
@@ -161,7 +161,7 @@ int main(void){
         //Save the state of the main.
         sigsetjmp(scheduler_buf, 1);
 
-        
+
         curr_process = (curr_process == config.num_threads - 1) ? 0 : curr_process + 1;
         if(processes[curr_process].current_workload < config.workload){
             //printf("Running process: %d\n", curr_process);
@@ -204,14 +204,14 @@ int main(void){
             update_tickets(winner_process,lottery_tickets[random_ticket_entry]);
             printf("Check 6\n");
             curr_process = winner_process;
-            
+
             ualarm(config.quantum,0);
             printf("Process Selected: %d\n", curr_process);
             printf("Check\n");
             run_process_fcfs();
         }
         //Initialice with Tickets.
-        
+
 
 
     }
@@ -223,7 +223,7 @@ void run_process_ls(){
 
 }
 void run_process_fcfs(){
-    
+
     processes[curr_process].state = RUNNING;
     while(1){
         processes[curr_process].pi += 2*( 2*pow(-1, processes[curr_process].current_workload ) / (1+2*processes[curr_process].current_workload));
@@ -272,16 +272,16 @@ void config_get(struct scheduler_config *config)
 
   int i = 0;
   fscanf (fp, "%s", algorithm);
-  fscanf (fp, "%s", operation_mode);      
-  fscanf (fp, "%d", &process_num);      
-  fscanf (fp, "%d", &arrival_time);      
-  fscanf (fp, "%d", &workload);      
-  fscanf (fp, "%d", &bills);      
-  fscanf (fp, "%d", &quantum);  
-  fscanf (fp, "%d", &ticket_am); 
+  fscanf (fp, "%s", operation_mode);
+  fscanf (fp, "%d", &process_num);
+  fscanf (fp, "%d", &arrival_time);
+  fscanf (fp, "%d", &workload);
+  fscanf (fp, "%d", &bills);
+  fscanf (fp, "%d", &quantum);
+  fscanf (fp, "%d", &ticket_am);
   fclose (fp);
 
-  
+
   config->algorithm = algorithm;
   config->operation_mode = operation_mode;
   config->num_threads= process_num;
@@ -289,7 +289,7 @@ void config_get(struct scheduler_config *config)
   config->workload = workload;
   config->bills = bills;
   config->ticket_am = ticket_am;
-  
+
   // Main Thread + Number of Threads
   config->quantum = quantum;
 
