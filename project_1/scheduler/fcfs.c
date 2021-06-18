@@ -7,7 +7,21 @@
 #include <math.h>
 #include <string.h>
 
+#define STACK_SIZE 4096
 
+typedef unsigned long address_t;
+#define JB_SP 6
+#define JB_PC 7
+
+address_t translate_address(address_t addr)
+{
+    address_t ret;
+    asm volatile("xor    %%fs:0x30,%0\n"
+		"rol    $0x11,%0\n"
+                 : "=g" (ret)
+                 : "0" (addr));
+    return ret;
+}
 
 struct scheduler_config{
     char* algorithm;
@@ -36,6 +50,8 @@ struct thread{
     int bill;
     int i;
     enum thread_state state;
+    char stack[STACK_SIZE];
+    void *(function);
 };
 
 
@@ -50,82 +66,82 @@ static int first_run;
 struct thread * processes;
 sigjmp_buf scheduler_buf;
 
+
+void create_process(void * function, int p){
+
+
+        address_t sp, pc;
+        processes[p].current_workload = 0;
+        processes[p].state = MAIN;
+}
+
 int main(void){
     printf("Setting up the system\n");
     config_get(&config);
     processes = malloc(sizeof(processes)*config.num_threads);
+    int i;
+    for(i = 0; i < config.num_threads; i++ ){
+        create_process(run_process_fcfs,i);
+    }
     first_run = 1;
-    printf("Setting up the alarm\n");
+    //printf("Setting up the alarm\n");
     signal(SIGALRM, sig_alrm);
 
-    curr_process = -1;
+    curr_process = 0;
     //Save the state of the main.
     sigsetjmp(scheduler_buf, 1);
 
-    if(first_run){
-        curr_process++;
-        if(curr_process == config.num_threads -1 ) first_run = 0;
-        printf("First Run. Running process: %d\n", curr_process);
-        if(!strcmp(config.operation_mode, "PREEMPTIVE")){
-            printf("Preemtive mode.\n");
-            alarm(0.001);
+    
+    curr_process = (curr_process == config.num_threads - 1) ? 0 : curr_process + 1;
+    if(processes[curr_process].current_workload < config.workload){
+        //printf("Running process: %d\n", curr_process);
+        if(!strcmp(config.operation_mode,"PREEMPTIVE")) {
+            //printf("Preemtive mode.\n");
+            ualarm(config.quantum,0);
         }
+        //siglongjmp(processes[curr_process].env,1);
         run_process_fcfs();
     }
     else{
-        //Round robin current process
-        //Process #0 might be avoided cause it is the main loop.
-        
-        curr_process = (curr_process == config.num_threads - 1) ? 0 : curr_process + 1;
-        if(processes[curr_process].state != FINISHED){
-            printf("Running process: %d\n", curr_process);
-            if(!strcmp(config.operation_mode,"PREEMPTIVE")) {
-                printf("Preemtive mode.\n");
-                alarm(1/1000000000);
-            }
-            siglongjmp(processes[curr_process].env,1);
-        }
+        ualarm(config.quantum,0);
+        siglongjmp(scheduler_buf,1);
     }
-
     while(1);
 }
-
+void run_process_ls(){
+    
+}
 void run_process_fcfs(){
-    processes[curr_process].current_workload = 0;
+    //printf("being called\n");
     processes[curr_process].state = RUNNING;
     while(1){
         processes[curr_process].pi += 2*( 2*pow(-1, processes[curr_process].current_workload ) / (1+2*processes[curr_process].current_workload));
-        printf("current_workload: %d\n",processes[curr_process].current_workload );
-        if(!strcmp(config.operation_mode, "NON-PREEMPTIVE")){
-            //printf("Setup is non-preemptive\n");
-            if(processes[curr_process].current_workload % config.quantum == 0){
-                printf("Saving status for process\n");
-                if(!sigsetjmp(processes[curr_process].env,1)){
-                    processes[curr_process].state = WAITING;
-                    siglongjmp(scheduler_buf,1);
-                }
-                else {
-                    //printf("Coming back from process\n");
-                    processes[curr_process].state = RUNNING;
-                }
-            }
-
-        }
+        //printf("current_workload: %d\n",processes[curr_process].current_workload );
         if(processes[curr_process].current_workload >= config.workload){
             printf("Process finished!!!\n");
             printf("Pi calculation: %Lf\n", processes[curr_process].pi);
             processes[curr_process].state = FINISHED;
             siglongjmp(scheduler_buf,1);
         }
-        processes[curr_process].current_workload ++;
-        
+        processes[curr_process].state = RUNNING;
+        if(!strcmp(config.operation_mode, "NON-PREEMPTIVE")){
+            //printf("Setup is non-preemptive\n");
+            if(processes[curr_process].current_workload % config.quantum == 0){
+                //printf("Saving status for process\n");
+                    processes[curr_process].current_workload ++;
+                    processes[curr_process].state = WAITING;
+                    siglongjmp(scheduler_buf,1);
+            }
 
+        }
+        processes[curr_process].current_workload ++;
     }
 }
 
 void sig_alrm(int signo){
-    printf("Timer Expired\n");
-    //if(!sigsetjmp(scheduler_buf,1)) siglongjmp(scheduler_buf,1);
+    processes[curr_process].state = WAITING;
+    //printf("Timer Expired\n");
+    siglongjmp(scheduler_buf,1);
 }
 
 
