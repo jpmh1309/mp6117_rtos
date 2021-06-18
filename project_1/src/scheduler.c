@@ -109,11 +109,12 @@ void thread_execute(void)
   {
     scheduler_thread[current_thread].pi += 2*( 2*pow(-1, scheduler_thread[current_thread].current_workload ) / (1+2*scheduler_thread[current_thread].current_workload));
     // NON-PREEMPTIVE MODE LEAVE CPU
-    count++;
-    if (count==config.quantum) {
-      scheduler_thread[current_thread].state = WAITING;
-      scheduler();
-    }
+    // count++;
+    // if (count==config.quantum) {
+    //   scheduler_thread[current_thread].state = WAITING;
+    //   scheduler();
+    // }
+    // sleepsec(10000);
   }
     // sleepsec(1215752192);
     // int count = current_thread.data.workload;
@@ -187,12 +188,12 @@ void fcfs_next_thread(){
 //   stop_timer();
 // }
 
-// void signal_handler(){
-// 	printf(" -> Time expired, jumping to next thread!, Partial Result = %.5LF\n\n", current_thread.data.result);
-// 	current_thread.state = WAITING;
-//   save_current_state();
-//   scheduler();
-// }
+void signal_handler(){
+	printf(" -> Time expired, jumping to next thread!, Partial Result = %.5LF, workload= %d\n\n", scheduler_thread[current_thread].pi, scheduler_thread[current_thread].current_workload);
+	scheduler_thread[current_thread].state = WAITING;
+  // save_current_state();
+  scheduler();
+}
 
 void scheduler()
 {
@@ -207,11 +208,11 @@ void scheduler()
     fcfs_next_thread(config);
 
     // Set timer in preemptive mode
-		if (!strcmp(config.algorithm, "PREEMPTIVE"))
+		if (!strcmp(config.operation_mode, "PREEMPTIVE"))
     {
       printf("FCFS-PREEMPTIVE");
       // TODO: FCFS PREEMPTIVE MODE
-      // timer_quantum(quantum, signal_handler);
+      timer_quantum(config.quantum, signal_handler);
 		}
   } else {
     // TODO: LOTTERY SCHEDULING
@@ -283,11 +284,11 @@ void config_get()
 {
   // FIXME: Get information from file
   config.algorithm = "FCFS";
-  config.operation_mode = "NON-PREEMPTIVE";
+  config.operation_mode = "PREEMPTIVE";
   // Main Thread + Number of Threads
   config.workload = 5*WORKLOAD_TERMS;
   config.num_threads = START_THREAD + 5;
-  config.quantum = 1000;
+  config.quantum = 10;
 
   // config.algorithm = "LOTTERY SCHEDULING";
   // config.operation_mode = "NON-PREEMPTIVE";

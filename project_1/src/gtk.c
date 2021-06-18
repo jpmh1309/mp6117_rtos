@@ -1,4 +1,15 @@
-#include <gtk/gtk.h>
+  #include <gtk/gtk.h>
+#include <math.h>
+
+int current_thread;
+
+GtkWidget *button_current_thread;
+
+typedef struct {
+  GtkWidget *progress_bar;
+  GtkWidget *pi;
+  GtkWidget *error;
+} process_info;
 
 typedef struct {
   int number_process;
@@ -6,39 +17,43 @@ typedef struct {
   gchar *operation_mode;
 } point;
 
+
+// process_info process_info_table[15];
+process_info *process_info_table;
+
 static void print_hello(GtkWidget *widget,
                         gpointer   data)
 {
   g_print ("Hello World\n");
 }
 
-static gboolean fill (gpointer   user_data)
+static void update_current(int current_thread)
 {
-  GtkWidget *progress_bar = user_data;
+  gchar *text = g_strdup_printf("PID %d", current_thread);
+  gtk_button_set_label(GTK_BUTTON (button_current_thread), text);
+}
 
-  /*Get the current progress*/
-  gdouble fraction;
-  fraction = gtk_progress_bar_get_fraction (GTK_PROGRESS_BAR (progress_bar));
+static void update_process(int current_thread, int workload, long double pi)
+{
 
-  /*Increase the bar by 10% each time this function is called*/
-  fraction += 0.1;
+  gdouble fraction = (gdouble) workload/15;
+  gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (process_info_table[current_thread].progress_bar), fraction);
+  /*Fill in the given fraction of the bar. Has to be between 0.0-1.0 inclusive*/
 
-  /*Fill in the bar with the new fraction*/
-  gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (progress_bar), fraction);
+  gchar *text = g_strdup_printf("%.5LF", pi);
+  gtk_button_set_label(GTK_BUTTON (process_info_table[current_thread].pi), text);
 
-  /*Ensures that the fraction stays below 1.0*/
-  if (fraction < 1.0)
-    return TRUE;
+  text = g_strdup_printf("%.2LF %%", 100*(1-pi/M_PI));
+  gtk_button_set_label(GTK_BUTTON (process_info_table[current_thread].error), text);
 
-  return FALSE;
 }
 
 static void table_content(GtkGrid *grid,
                           int number_process)
 {
-  GtkWidget *progress_bar;
+  // GtkWidget *progress_bar;
   GtkWidget *label;
-  gdouble fraction = 0.0;
+  gdouble fraction = 0.2;
 
   for(int i=0; i<number_process; i++)
   {
@@ -49,26 +64,20 @@ static void table_content(GtkGrid *grid,
     gtk_grid_attach (GTK_GRID (grid), label, 0, y, 2, 1);
 
     /*Create a progressbar and add it to the window*/
-    progress_bar = gtk_progress_bar_new ();
+    process_info_table[i].progress_bar = gtk_progress_bar_new ();
     gtk_grid_attach_next_to (GTK_GRID (grid),
-                             progress_bar,
+                             process_info_table[i].progress_bar,
                              label,
                              GTK_POS_RIGHT, 4, 1);
 
     /*Fill in the given fraction of the bar. Has to be between 0.0-1.0 inclusive*/
-    gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (progress_bar), fraction);
+    gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (process_info_table[i].progress_bar), fraction);
 
-    // gtk_progress_set_percentage (GTK_PROGRESS (pdata->progressbar),
-    //                              pvalue);
+    process_info_table[i].pi = gtk_button_new_with_label("3.12222");
+    gtk_grid_attach (GTK_GRID (grid), process_info_table[i].pi, 6, y, 2, 1);
 
-    /*Use the created fill function every 500 milliseconds*/
-    g_timeout_add (500, fill, GTK_PROGRESS_BAR (progress_bar));
-
-    label = gtk_button_new_with_label("3.12222");
-    gtk_grid_attach (GTK_GRID (grid), label, 6, y, 2, 1);
-
-    label = gtk_button_new_with_label("10%");
-    gtk_grid_attach (GTK_GRID (grid), label, 8, y, 2, 1);
+    process_info_table[i].error = gtk_button_new_with_label("10%");
+    gtk_grid_attach (GTK_GRID (grid), process_info_table[i].error, 8, y, 2, 1);
   }
 }
 
@@ -112,49 +121,6 @@ static void activate(GtkApplication *app,
    */
   gtk_grid_attach (GTK_GRID (grid), button, 5, 0, 5, 1);
 
-  // button = gtk_button_new_with_label ("Button 2");
-  // g_signal_connect (button, "clicked", G_CALLBACK (print_hello), NULL);
-  //
-  // /* Place the second button in the grid cell (1, 0), and make it fill
-  //  * just 1 cell horizontally and vertically (ie no spanning)
-  //  */
-  // gtk_grid_attach (GTK_GRID (grid), button, 3, 0, 1, 1);
-  //
-  // button = gtk_button_new_with_label ("STOP");
-  // g_signal_connect (button, "clicked", G_CALLBACK (print_hello), NULL);
-  //
-  // gtk_grid_attach (GTK_GRID (grid), button, 4, 0, 1, 1);
-  //
-  // button = gtk_button_new_with_label ("Button 2");
-  // g_signal_connect (button, "clicked", G_CALLBACK (print_hello), NULL);
-  //
-  // gtk_grid_attach (GTK_GRID (grid), button, 5, 0, 1, 1);
-  //
-  // button = gtk_button_new_with_label ("STOP");
-  // g_signal_connect (button, "clicked", G_CALLBACK (print_hello), NULL);
-  //
-  // gtk_grid_attach (GTK_GRID (grid), button, 6, 0, 1, 1);
-  //
-  // button = gtk_button_new_with_label ("Button 2");
-  // g_signal_connect (button, "clicked", G_CALLBACK (print_hello), NULL);
-  //
-  // gtk_grid_attach (GTK_GRID (grid), button, 7, 0, 1, 1);
-  //
-  // button = gtk_button_new_with_label ("Button 2");
-  // g_signal_connect (button, "clicked", G_CALLBACK (print_hello), NULL);
-  //
-  // /* Place the second button in the grid cell (1, 0), and make it fill
-  //  * just 1 cell horizontally and vertically (ie no spanning)
-  //  */
-  // gtk_grid_attach (GTK_GRID (grid), button, 1, 0, 1, 1);
-
- //  // TABLE
- //
- //  /* Create a 2x2 table */
- // table = gtk_table_new (2, 2, TRUE);
- // /* Put the table in the main window */
- // gtk_grid_attach (GTK_GRID (grid), table, 0, 4, 2, 2);
-
   // TABLE HEADER
   label = gtk_button_new_with_label("PROCESS ID");
   gtk_grid_attach (GTK_GRID (grid), label, 0, 1, 2, 1);
@@ -171,11 +137,6 @@ static void activate(GtkApplication *app,
   // TABLE CONTENT
   table_content(GTK_GRID (grid), data->number_process);
 
-  // box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 2);
-  // gtk_grid_attach (GTK_GRID (grid), label, 0, 2+data->number_process, 10, 1);
-
-
-
   // QUIT Button
   button = gtk_button_new_with_label ("CURRENT PROCESS:");
 
@@ -185,12 +146,13 @@ static void activate(GtkApplication *app,
   gtk_grid_attach (GTK_GRID (grid), button, 0, 2+data->number_process, 5, 1);
 
   // QUIT Button
-  button = gtk_button_new_with_label ("PID 001");
+  gchar *text = g_strdup_printf("PID %d", current_thread);
+  button_current_thread = gtk_button_new_with_label(text);
 
   /* Place the Quit button in the grid cell (0, 1), and make it
    * span 2 columns.
    */
-  gtk_grid_attach (GTK_GRID (grid), button, 5, 2+data->number_process, 5, 1);
+  gtk_grid_attach (GTK_GRID (grid), button_current_thread, 5, 2+data->number_process, 5, 1);
 
   button = gtk_button_new_with_label ("ALGORITHM:");
 
@@ -222,6 +184,8 @@ static void activate(GtkApplication *app,
    */
   gtk_grid_attach (GTK_GRID (grid), button, 5, 4+data->number_process, 5, 1);
 
+  update_process(5, 12, 3.10);
+
   // QUIT Button
   button = gtk_button_new_with_label ("QUIT");
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), window);
@@ -244,7 +208,9 @@ int init_gtk(int argc, char **argv) {
   int status;
   GtkApplication *app;
   point data = {15, "LOTTERY SCHEDULING", "PREEMPTIVE"};
+  process_info_table = malloc(data.number_process * sizeof(process_info));
 
+  current_thread = 0;
   app = gtk_application_new ("org.gtk.example", G_APPLICATION_FLAGS_NONE);
   g_signal_connect (app, "activate", G_CALLBACK (activate), &data);
   status = g_application_run (G_APPLICATION (app), argc, argv);
