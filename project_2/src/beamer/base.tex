@@ -1,6 +1,5 @@
-\documentclass{beamer}
+\documentclass[xcolor=table]{beamer}
 \usepackage[utf8]{inputenc}
-\usepackage{ifthen}
 
 \usetheme{Madrid}
 \usecolortheme{default}
@@ -28,13 +27,13 @@
 \date[August 2021] % (optional)
 {MP-6117 Real Time Operating Systems, August 2021}
 
-\logo{\includegraphics[height=0.5cm]{logo-tec.png}}
+\logo{\includegraphics[height=0.4cm]{beamer/logo-tec.png}}
 
 %End of title page configuration block
 %------------------------------------------------------------
 
 %------------------------------------------------------------
-%The next block of commands puts the table of contents at the 
+%The next block of commands puts the table of contents at the
 %beginning of each section and highlights the current section:
 
 \AtBeginSection[]
@@ -49,9 +48,6 @@
 
 \begin{document}
 
-\newcounter{rm}
-\setcounter{rm}{1}
-    
 %The next statement creates the title page.
 \frame{\titlepage}
 
@@ -69,7 +65,6 @@
 \section{Algorithms}
 
 %---------------------------------------------------------
-%Changing visivility of the text
 \begin{frame}
 \frametitle{Algorithms}
 In this project, we will study the following real time scheduling algorithms:
@@ -83,9 +78,7 @@ In this project, we will study the following real time scheduling algorithms:
 
 %---------------------------------------------------------
 
-\ifnum \value{rm}=1 {
 %---------------------------------------------------------
-%Highlighting text
 \begin{frame}
 \frametitle{Rate Monotonic (\textbf{RM})}
 
@@ -95,10 +88,26 @@ Rate monotonic is a priority assignment algorithm used in real-time operating sy
 
 \end{frame}
 %---------------------------------------------------------
-}
 
 %---------------------------------------------------------
-%Highlighting text
+\begin{frame}
+\frametitle{Rate Monotonic (\textbf{RM})}
+
+\begin{block}{Schedulability Test:}
+\begin{equation}
+\prod_{i=0}^{n} \left( \frac{E_i}{P_i}+1 \right) \leq 2
+\end{equation}
+
+\begin{itemize}
+    \item $E_i$: execution time of the task $i$.
+    \item $P_i$: period of the task $i$.
+\end{itemize}
+\end{block}
+
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
 \begin{frame}
 \frametitle{Earliest Deadline First (\textbf{EDF})}
 
@@ -110,7 +119,24 @@ Earliest Deadline First is a dynamic priority scheduling algorithm used in real-
 %---------------------------------------------------------
 
 %---------------------------------------------------------
-%Highlighting text
+\begin{frame}
+\frametitle{Earliest Deadline First (\textbf{EDF})}
+
+\begin{block}{Schedulability Test:}
+\begin{equation}
+\sum_{i=0}^{n} \left( \frac{E_i}{P_i} \right) \leq 1
+\end{equation}
+
+\begin{itemize}
+    \item $E_i$: execution time of the task $i$.
+    \item $P_i$: period of the task $i$.
+\end{itemize}
+\end{block}
+
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
 \begin{frame}
 \frametitle{Least Laxity First (\textbf{LLF})}
 
@@ -131,58 +157,13 @@ Least Laxity First  is a job level dynamic priority scheduling algorithm. It mea
 \end{frame}
 %---------------------------------------------------------
 
-\section{Rate Monotonic}
-
 %---------------------------------------------------------
-%Highlighting text
 \begin{frame}
-\frametitle{Schedulability Tests}
+\frametitle{Least Laxity First (\textbf{LLF})}
+
+\begin{block}{Schedulability Test:}
+TODO: Missing equations
+\end{block}
 
 \end{frame}
 %---------------------------------------------------------
-
-%---------------------------------------------------------
-%Highlighting text
-\begin{frame}
-\frametitle{Execution}
-
-\end{frame}
-%---------------------------------------------------------
-
-\section{Earliest Deadline First}
-
-%---------------------------------------------------------
-%Highlighting text
-\begin{frame}
-\frametitle{Schedulability Tests}
-
-\end{frame}
-%---------------------------------------------------------
-
-%---------------------------------------------------------
-%Highlighting text
-\begin{frame}
-\frametitle{Execution}
-
-\end{frame}
-%---------------------------------------------------------
-
-\section{Least Laxity First}
-
-%---------------------------------------------------------
-%Highlighting text
-\begin{frame}
-\frametitle{Schedulability Tests}
-
-\end{frame}
-%---------------------------------------------------------
-
-%---------------------------------------------------------
-%Highlighting text
-\begin{frame}
-\frametitle{Execution}
-
-\end{frame}
-%---------------------------------------------------------
-
-\end{document}

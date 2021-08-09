@@ -1,6 +1,6 @@
 /***********************************************************
 * Project Name: Project 2: Real Time Scheduling            *
-* File Name: main.c                                        *
+* File Name: gtk.c                                         *
 * University: Costa Rica Institute of Technology           *
 * Lecture: MP-6117 Real Time Operating Systems             *
 * Students: - David Martinez                               *
@@ -10,14 +10,17 @@
 #include <gtk/gtk.h>
 #include <assert.h>
 
+// ------------------------------------------------------------------------- //
+// GLOBAL VARIABLES AND STRUCTS
+// ------------------------------------------------------------------------- //
 typedef struct {
-  unsigned int execution_time[30];
-  unsigned int period[30];
+  unsigned int execution_time[20];
+  unsigned int period[20];
   GtkWidget *window;
   GtkWidget *entry;
   unsigned int number_tasks;
-  GtkWidget *c_entry[30];
-  GtkWidget *p_entry[30];
+  GtkWidget *c_entry[20];
+  GtkWidget *p_entry[20];
   GtkWidget *button_rm;
   GtkWidget *button_edf;
   GtkWidget *button_llf;
@@ -28,13 +31,6 @@ typedef struct {
   unsigned char edf;
   unsigned char llf;
 } configuration;
-
-static void print_hello (GtkWidget *widget,
-                         gpointer   user_data)
-{
-  g_print ("Hello World\n");
-}
-
 
 static void generate_tex (GtkWidget *widget,
                           gpointer   user_data)
@@ -281,18 +277,23 @@ static void init_window (GtkApplication *app,
   gtk_widget_show_all (config->window);
 }
 
+void initial_conditions(configuration *config)
+{
+  config->number_tasks = 0;
+  config->multiple_slides = 0x01 ;
+  config->rm = 0x00 ;
+  config->edf = 0x00 ;
+  config->llf = 0x00 ;
+}
+
+/*
 int main (int argc, char **argv)
 {
   GtkApplication *app;
   configuration config;
   int status;
 
-  config.number_tasks = 0;
-  config.multiple_slides = 0x01 ;
-  config.rm = 0x00 ;
-  config.edf = 0x00 ;
-  config.llf = 0x00 ;
-  if (config.multiple_slides) g_print ("Multiple Slides\n");
+  initial_conditions(&config);
 
   app = gtk_application_new ("project2.mp6117", G_APPLICATION_FLAGS_NONE);
   g_signal_connect (app, "activate", G_CALLBACK (init_window), &config);
@@ -300,4 +301,4 @@ int main (int argc, char **argv)
   g_object_unref (app);
 
   return status;
-}
+}*/
