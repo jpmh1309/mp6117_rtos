@@ -1,0 +1,188 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{ifthen}
+
+\usetheme{Madrid}
+\usecolortheme{default}
+
+%------------------------------------------------------------
+%This block of code defines the information to appear in the
+%Title page
+\title[Real Time Scheduling] %optional
+{Project 2: Real Time Scheduling}
+
+\author[ David Martínez, José Martínez] % (optional)
+{David Martínez García\inst{1} \and José Martínez Hernández\inst{2}}
+
+\institute[TEC] % (optional)
+{
+  \inst{1}%
+  \url{david.martinez@estudiantec.cr}\\
+  \textsc{2007058596}
+  \and
+  \inst{2}%
+  \url{jpmh.1309@estudiantec.cr} \\
+  \textsc{2020426476}
+}
+
+\date[August 2021] % (optional)
+{MP-6117 Real Time Operating Systems, August 2021}
+
+\logo{\includegraphics[height=0.5cm]{logo-tec.png}}
+
+%End of title page configuration block
+%------------------------------------------------------------
+
+%------------------------------------------------------------
+%The next block of commands puts the table of contents at the 
+%beginning of each section and highlights the current section:
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+%------------------------------------------------------------
+
+
+\begin{document}
+
+\newcounter{rm}
+\setcounter{rm}{1}
+    
+%The next statement creates the title page.
+\frame{\titlepage}
+
+
+%---------------------------------------------------------
+%This block of code is for the table of contents after
+%the title page
+\begin{frame}
+\frametitle{Table of Contents}
+\tableofcontents
+\end{frame}
+%---------------------------------------------------------
+
+
+\section{Algorithms}
+
+%---------------------------------------------------------
+%Changing visivility of the text
+\begin{frame}
+\frametitle{Algorithms}
+In this project, we will study the following real time scheduling algorithms:
+
+\begin{itemize}
+    \item Rate Monotonic (\textbf{RM})
+    \item Earliest Deadline First (\textbf{EDF})
+    \item Least Laxity First (\textbf{LLF})
+\end{itemize}
+\end{frame}
+
+%---------------------------------------------------------
+
+\ifnum \value{rm}=1 {
+%---------------------------------------------------------
+%Highlighting text
+\begin{frame}
+\frametitle{Rate Monotonic (\textbf{RM})}
+
+\begin{alertblock}{General Description:}
+Rate monotonic is a priority assignment algorithm used in real-time operating systems with a static-priority scheduling class. The static priorities are assigned according to the cycle duration of the job, so a shorter cycle duration results in a higher job priority.
+\end{alertblock}
+
+\end{frame}
+%---------------------------------------------------------
+}
+
+%---------------------------------------------------------
+%Highlighting text
+\begin{frame}
+\frametitle{Earliest Deadline First (\textbf{EDF})}
+
+\begin{alertblock}{General Description:}
+Earliest Deadline First is a dynamic priority scheduling algorithm used in real-time operating systems to place processes in a priority queue. Whenever a scheduling event occurs the queue will be searched for the process closest to its deadline. This process is the next to be scheduled for execution.
+\end{alertblock}
+
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
+%Highlighting text
+\begin{frame}
+\frametitle{Least Laxity First (\textbf{LLF})}
+
+\begin{alertblock}{General Description:}
+Least Laxity First  is a job level dynamic priority scheduling algorithm. It means that every instant is a scheduling event because laxity of each task changes on every instant of time. A task which has least laxity at an instant, it will have higher priority than others at this instant. Laxity is mathematically it is described as
+
+\begin{equation}
+    L_i = D_i - (t_i + C^r_i)
+\end{equation}
+
+\begin{itemize}
+    \item $D_i$: next deadline of the task at $t_i$.
+    \item $t_i$: current execution time.
+    \item $C^r_i$: remaining computer time of the task at $t_i$.
+\end{itemize}
+\end{alertblock}
+
+\end{frame}
+%---------------------------------------------------------
+
+\section{Rate Monotonic}
+
+%---------------------------------------------------------
+%Highlighting text
+\begin{frame}
+\frametitle{Schedulability Tests}
+
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
+%Highlighting text
+\begin{frame}
+\frametitle{Execution}
+
+\end{frame}
+%---------------------------------------------------------
+
+\section{Earliest Deadline First}
+
+%---------------------------------------------------------
+%Highlighting text
+\begin{frame}
+\frametitle{Schedulability Tests}
+
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
+%Highlighting text
+\begin{frame}
+\frametitle{Execution}
+
+\end{frame}
+%---------------------------------------------------------
+
+\section{Least Laxity First}
+
+%---------------------------------------------------------
+%Highlighting text
+\begin{frame}
+\frametitle{Schedulability Tests}
+
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
+%Highlighting text
+\begin{frame}
+\frametitle{Execution}
+
+\end{frame}
+%---------------------------------------------------------
+
+\end{document}
