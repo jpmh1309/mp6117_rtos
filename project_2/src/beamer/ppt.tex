@@ -167,93 +167,6 @@ TODO: Missing equations
 
 \end{frame}
 %---------------------------------------------------------
-\section{Rate Monotonic}
-\begin{frame}
-\frametitle{Schedulability Tests}
-\begin{table}[]
-\begin{tabular}{|c|c|c|}
-\hline
-\textbf{Task ID} & \textbf{Execution Time} & \textbf{Period}\\ \hline
-\cellcolor[HTML]{ECF6CE}1 &\cellcolor[HTML]{ECF6CE}1 &\cellcolor[HTML]{ECF6CE}2 \\ \hline
-\cellcolor[HTML]{A4A4A4}2 &\cellcolor[HTML]{A4A4A4}1 &\cellcolor[HTML]{A4A4A4}3 \\ \hline
-\cellcolor[HTML]{F781D8}3 &\cellcolor[HTML]{F781D8}1 &\cellcolor[HTML]{F781D8}4 \\ \hline
-\cellcolor[HTML]{8181F7}4 &\cellcolor[HTML]{8181F7}1 &\cellcolor[HTML]{8181F7}6 \\ \hline
-\end{tabular}
-\end{table}
-\end{frame}
-\begin{frame}
-\frametitle{Execution}
-\begin{table}[]
-\resizebox{\textwidth}{!}{
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
-\hline
-\textbf{Task ID} & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} \\ \hline
-\cellcolor[HTML]{ECF6CE} \textbf{1} & \cellcolor[HTML]{ECF6CE} &  & X &  & X &  & X &  & X &  & X &  & X\\ \hline
-\cellcolor[HTML]{A4A4A4} \textbf{2} &  & \cellcolor[HTML]{A4A4A4} &  & X &  &  & X & \cellcolor[HTML]{A4A4A4} &  & X &  &  & X\\ \hline
-\cellcolor[HTML]{F781D8} \textbf{3} &  &  & \cellcolor[HTML]{F781D8} &  & X &  &  &  & X &  &  &  & X\\ \hline
-\cellcolor[HTML]{8181F7} \textbf{4} &  &  &  & \cellcolor[HTML]{8181F7} &  &  & X &  &  & \cellcolor[HTML]{8181F7} &  &  & X\\ \hline
-\end{tabular}
-}
-\end{table}
-\end{frame}
-\section{Earliest Deadline First}
-\begin{frame}
-\frametitle{Schedulability Tests}
-\begin{table}[]
-\begin{tabular}{|c|c|c|}
-\hline
-\textbf{Task ID} & \textbf{Execution Time} & \textbf{Period}\\ \hline
-\cellcolor[HTML]{ECF6CE}1 &\cellcolor[HTML]{ECF6CE}1 &\cellcolor[HTML]{ECF6CE}2 \\ \hline
-\cellcolor[HTML]{A4A4A4}2 &\cellcolor[HTML]{A4A4A4}1 &\cellcolor[HTML]{A4A4A4}3 \\ \hline
-\cellcolor[HTML]{F781D8}3 &\cellcolor[HTML]{F781D8}1 &\cellcolor[HTML]{F781D8}4 \\ \hline
-\cellcolor[HTML]{8181F7}4 &\cellcolor[HTML]{8181F7}1 &\cellcolor[HTML]{8181F7}6 \\ \hline
-\end{tabular}
-\end{table}
-\end{frame}
-\begin{frame}
-\frametitle{Execution}
-\begin{table}[]
-\resizebox{\textwidth}{!}{
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
-\hline
-\textbf{Task ID} & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} \\ \hline
-\cellcolor[HTML]{ECF6CE} \textbf{1} & \cellcolor[HTML]{ECF6CE} &  & X &  & X &  & X &  & X &  & X &  & X\\ \hline
-\cellcolor[HTML]{A4A4A4} \textbf{2} &  & \cellcolor[HTML]{A4A4A4} &  & X &  &  & X & \cellcolor[HTML]{A4A4A4} &  & X &  &  & X\\ \hline
-\cellcolor[HTML]{F781D8} \textbf{3} &  &  & \cellcolor[HTML]{F781D8} &  & X &  &  &  & X &  &  &  & X\\ \hline
-\cellcolor[HTML]{8181F7} \textbf{4} &  &  &  & \cellcolor[HTML]{8181F7} &  &  & X &  &  & \cellcolor[HTML]{8181F7} &  &  & X\\ \hline
-\end{tabular}
-}
-\end{table}
-\end{frame}
-\section{Least Laxity First}
-\begin{frame}
-\frametitle{Schedulability Tests}
-\begin{table}[]
-\begin{tabular}{|c|c|c|}
-\hline
-\textbf{Task ID} & \textbf{Execution Time} & \textbf{Period}\\ \hline
-\cellcolor[HTML]{ECF6CE}1 &\cellcolor[HTML]{ECF6CE}1 &\cellcolor[HTML]{ECF6CE}2 \\ \hline
-\cellcolor[HTML]{A4A4A4}2 &\cellcolor[HTML]{A4A4A4}1 &\cellcolor[HTML]{A4A4A4}3 \\ \hline
-\cellcolor[HTML]{F781D8}3 &\cellcolor[HTML]{F781D8}1 &\cellcolor[HTML]{F781D8}4 \\ \hline
-\cellcolor[HTML]{8181F7}4 &\cellcolor[HTML]{8181F7}1 &\cellcolor[HTML]{8181F7}6 \\ \hline
-\end{tabular}
-\end{table}
-\end{frame}
-\begin{frame}
-\frametitle{Execution}
-\begin{table}[]
-\resizebox{\textwidth}{!}{
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
-\hline
-\textbf{Task ID} & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} \\ \hline
-\cellcolor[HTML]{ECF6CE} \textbf{1} & \cellcolor[HTML]{ECF6CE} &  & X &  & X &  & X &  & X &  & X &  & X\\ \hline
-\cellcolor[HTML]{A4A4A4} \textbf{2} &  & \cellcolor[HTML]{A4A4A4} &  & X &  &  & X & \cellcolor[HTML]{A4A4A4} &  & X &  &  & X\\ \hline
-\cellcolor[HTML]{F781D8} \textbf{3} &  &  & \cellcolor[HTML]{F781D8} &  & X &  &  &  & X &  &  &  & X\\ \hline
-\cellcolor[HTML]{8181F7} \textbf{4} &  &  &  & \cellcolor[HTML]{8181F7} &  &  & X &  &  & \cellcolor[HTML]{8181F7} &  &  & X\\ \hline
-\end{tabular}
-}
-\end{table}
-\end{frame}
 \section{Rate Monotonic, Earliest Deadline Fist, Least Laxity First}
 \begin{frame}
 \frametitle{Schedulability Tests}
@@ -261,15 +174,14 @@ TODO: Missing equations
 \begin{tabular}{|c|c|c|}
 \hline
 \textbf{Task ID} & \textbf{Execution Time} & \textbf{Period}\\ \hline
-\cellcolor[HTML]{ECF6CE}1 &\cellcolor[HTML]{ECF6CE}1 &\cellcolor[HTML]{ECF6CE}2 \\ \hline
-\cellcolor[HTML]{A4A4A4}2 &\cellcolor[HTML]{A4A4A4}1 &\cellcolor[HTML]{A4A4A4}3 \\ \hline
-\cellcolor[HTML]{F781D8}3 &\cellcolor[HTML]{F781D8}1 &\cellcolor[HTML]{F781D8}4 \\ \hline
-\cellcolor[HTML]{8181F7}4 &\cellcolor[HTML]{8181F7}1 &\cellcolor[HTML]{8181F7}6 \\ \hline
+\cellcolor[HTML]{ECF6CE}1 &\cellcolor[HTML]{ECF6CE}2 &\cellcolor[HTML]{ECF6CE}3 \\ \hline
+\cellcolor[HTML]{A4A4A4}2 &\cellcolor[HTML]{A4A4A4}1 &\cellcolor[HTML]{A4A4A4}2 \\ \hline
+\cellcolor[HTML]{F781D8}3 &\cellcolor[HTML]{F781D8}4 &\cellcolor[HTML]{F781D8}4 \\ \hline
+\cellcolor[HTML]{8181F7}4 &\cellcolor[HTML]{8181F7}5 &\cellcolor[HTML]{8181F7}6 \\ \hline
 \end{tabular}
 \end{table}
 \begin{itemize}
 \item RM
-\item EDF
 \item LLF
 \end{itemize}
 \end{frame}
@@ -282,21 +194,8 @@ TODO: Missing equations
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
 \hline
 \textbf{Task ID} & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} \\ \hline
-\cellcolor[HTML]{ECF6CE} \textbf{1} & \cellcolor[HTML]{ECF6CE} &  & X &  & X &  & X &  & X &  & X &  & X\\ \hline
-\cellcolor[HTML]{A4A4A4} \textbf{2} &  & \cellcolor[HTML]{A4A4A4} &  & X &  &  & X & \cellcolor[HTML]{A4A4A4} &  & X &  &  & X\\ \hline
-\cellcolor[HTML]{F781D8} \textbf{3} &  &  & \cellcolor[HTML]{F781D8} &  & X &  &  &  & X &  &  &  & X\\ \hline
-\cellcolor[HTML]{8181F7} \textbf{4} &  &  &  & \cellcolor[HTML]{8181F7} &  &  & X &  &  & \cellcolor[HTML]{8181F7} &  &  & X\\ \hline
-\end{tabular}
-}
-\end{table}
-\item EDF
-\begin{table}[]
-\resizebox{0.8\textwidth}{0.1\textheight}{
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
-\hline
-\textbf{Task ID} & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} \\ \hline
-\cellcolor[HTML]{ECF6CE} \textbf{1} & \cellcolor[HTML]{ECF6CE} &  & X &  & X &  & X &  & X &  & X &  & X\\ \hline
-\cellcolor[HTML]{A4A4A4} \textbf{2} &  & \cellcolor[HTML]{A4A4A4} &  & X &  &  & X & \cellcolor[HTML]{A4A4A4} &  & X &  &  & X\\ \hline
+\cellcolor[HTML]{ECF6CE} \textbf{1} & \cellcolor[HTML]{ECF6CE} &  &  & X &  &  & X &  &  & X &  &  & X\\ \hline
+\cellcolor[HTML]{A4A4A4} \textbf{2} &  & \cellcolor[HTML]{A4A4A4} & X &  & X &  & X & \cellcolor[HTML]{A4A4A4} & X &  & X &  & X\\ \hline
 \cellcolor[HTML]{F781D8} \textbf{3} &  &  & \cellcolor[HTML]{F781D8} &  & X &  &  &  & X &  &  &  & X\\ \hline
 \cellcolor[HTML]{8181F7} \textbf{4} &  &  &  & \cellcolor[HTML]{8181F7} &  &  & X &  &  & \cellcolor[HTML]{8181F7} &  &  & X\\ \hline
 \end{tabular}
@@ -308,8 +207,8 @@ TODO: Missing equations
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
 \hline
 \textbf{Task ID} & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} \\ \hline
-\cellcolor[HTML]{ECF6CE} \textbf{1} & \cellcolor[HTML]{ECF6CE} &  & X &  & X &  & X &  & X &  & X &  & X\\ \hline
-\cellcolor[HTML]{A4A4A4} \textbf{2} &  & \cellcolor[HTML]{A4A4A4} &  & X &  &  & X & \cellcolor[HTML]{A4A4A4} &  & X &  &  & X\\ \hline
+\cellcolor[HTML]{ECF6CE} \textbf{1} & \cellcolor[HTML]{ECF6CE} &  &  & X &  &  & X &  &  & X &  &  & X\\ \hline
+\cellcolor[HTML]{A4A4A4} \textbf{2} &  & \cellcolor[HTML]{A4A4A4} & X &  & X &  & X & \cellcolor[HTML]{A4A4A4} & X &  & X &  & X\\ \hline
 \cellcolor[HTML]{F781D8} \textbf{3} &  &  & \cellcolor[HTML]{F781D8} &  & X &  &  &  & X &  &  &  & X\\ \hline
 \cellcolor[HTML]{8181F7} \textbf{4} &  &  &  & \cellcolor[HTML]{8181F7} &  &  & X &  &  & \cellcolor[HTML]{8181F7} &  &  & X\\ \hline
 \end{tabular}
