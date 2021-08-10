@@ -78,7 +78,9 @@ int createEarliestDeadlineFirst(struct Task * tasks, size_t num_tasks, struct Sc
         }
     }
     printf("num_deadlines: %d\n", (int) num_deadlines);
-
+    printf("Printing first 10 deadlines\n");
+    for(int i =0; i<10; i++)
+        printf("t:%d deadline for task_id: %d\n",deadlines[i].deadline,deadlines[i].task_id);
     //Tasks are arranged in meaning that the shortest deadline is first. 
     //The running_task variable refers to the index of the array and not the task id.
     //Schedule the first task out of the loop
@@ -96,11 +98,21 @@ int createEarliestDeadlineFirst(struct Task * tasks, size_t num_tasks, struct Sc
         //Aparently just moveing the running_task to the max will make it go to the lower priority in the next loop
         running_task = num_tasks;
     }
-
+    printf("t: %d. task: %d\n", 0, schedule[0].task_id);
+    printf("Tasks status:\n");
+    for(int w =0; w < num_tasks; w++){
+        printf("task_id: %d, status: %d\n", priorityTasks[w].task_id,priorityTasks[w].status);
+    }
+    printf("\n");
     for(int i =1; i< run_period +1; i++){
+        printf("t: %d. task: %d\n", i, schedule[i].task_id);
+        printf("Tasks status:\n");
+        for(int w =0; w < num_tasks; w++){
+            printf("task_id: %d, status: %d\n", priorityTasks[w].task_id,priorityTasks[w].status);
+        }
         int deadlineMissed = 0;
          
-        //Check if any deadline was missed.
+        //Check if any deadline was missed, if not, set the next in waiting priority
         for(int j =0; j < num_deadlines ; j++){
             if(deadlines[j].deadline == i){
                 for(int k = 0; k< num_tasks; k++){
@@ -111,10 +123,16 @@ int createEarliestDeadlineFirst(struct Task * tasks, size_t num_tasks, struct Sc
                             deadlineMissed = 1;
                             printf("Deadline was missed in time: %d for task_id: %d \n", i, deadlines[j].task_id);
                         }
-                    }
-                    else{
-                        priorityTasks[k].status = WAITING;
-                    }
+                        else{
+                            priorityTasks[k].status = WAITING;
+                            printf("t: %d, task_id: %d priority changed to WAITING\n", i,  priorityTasks[k].task_id );
+                            //printf("deadlines[j].deadline: %d\n",deadlines[j].deadline);
+                            //printf("The value of j is: %d\n",j);
+                            //printf("Printing first 10 deadlines\n");
+                            //for(int l =0; l<10; l++)
+                                //printf("t:%d deadline for task_id: %d\n",deadlines[l].deadline,deadlines[l].task_id);
+                        }
+                    }   
                 }
 
             }
@@ -141,16 +159,42 @@ int createEarliestDeadlineFirst(struct Task * tasks, size_t num_tasks, struct Sc
                 
                 //If the deadline is the same continue executing the same task.
                 //If not change the task to execute.
-                if(currentDeadline.deadline != deadlines[j].deadline)
+                //The task that was running should change to waiting
+                printf("Proposed EDF: %d\n", deadlines[j].task_id);
+                if(currentDeadline.deadline != deadlines[j].deadline){
+                    for(int k = 0; k< num_tasks; k++){
+                        if(currentDeadline.task_id == priorityTasks[k].task_id){
+                            if(priorityTasks[k].status != COMPLETED){
+                                priorityTasks[k].status = WAITING;
+                                printf("t: %d, task_id: %d priority changed to WAITING\n", i,  priorityTasks[k].task_id );
+                            }
+                        }
+                    }
                     currentDeadline = deadlines[j];
+
+                }
+                else{
+                    for(int k = 0; k< num_tasks; k++){
+                        if(currentDeadline.task_id == priorityTasks[k].task_id){
+                            if(priorityTasks[k].status == COMPLETED){
+                                currentDeadline = deadlines[j];
+                            
+                            }
+                        }
+                    }
+
+                }
                 
                 //Store the running task and put it to run
                 for(int k =0; k< num_tasks; k++){
                     if(currentDeadline.task_id == priorityTasks[k].task_id){
+                        
                         running_task = k;
+                        printf("Running taks id: %d\n", priorityTasks[running_task].task_id);
                         priorityTasks[running_task].status = RUNNING;
                     }
                 }
+                //printf("Current deadline for task: %d\n",currentDeadline.task_id);
                 break;
             }    
         }
@@ -174,8 +218,18 @@ int createEarliestDeadlineFirst(struct Task * tasks, size_t num_tasks, struct Sc
             schedule[i].task_id = 0;
         }
         printf("t: %d. task: %d\n", i, schedule[i].task_id);
+        printf("Tasks status:\n");
+        for(int w =0; w < num_tasks; w++){
+            printf("task_id: %d, status: %d\n", priorityTasks[w].task_id,priorityTasks[w].status);
+        }
+        printf("\n");
     
     }
+    for(int i =0; i< run_period +1 ; i++){
+        o_schedule[i] = schedule[i];
+    }
+
+    return run_period +1;
 }
 
 int main(){
@@ -186,15 +240,15 @@ int main(){
     
     tasks[0].task_id = 1;
     tasks[0].c = 1;
-    tasks[0].p = 5;
+    tasks[0].p = 6;
 
     tasks[1].task_id = 2;
     tasks[1].c = 2;
-    tasks[1].p = 8;
+    tasks[1].p = 9;
 
     tasks[2].task_id = 3;
     tasks[2].c = 6;
-    tasks[2].p = 19;
+    tasks[2].p = 18;
     
 
     //Unschedulable scenario.
