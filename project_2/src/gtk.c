@@ -1,6 +1,6 @@
 /***********************************************************
 * Project Name: Project 2: Real Time Scheduling            *
-* File Name: main.c                                        *
+* File Name: gtk.c                                         *
 * University: Costa Rica Institute of Technology           *
 * Lecture: MP-6117 Real Time Operating Systems             *
 * Students: - David Martinez                               *
@@ -9,15 +9,19 @@
 ************************************************************/
 #include <gtk/gtk.h>
 #include <assert.h>
+#include "latex.c"
 
-typedef struct {
-  unsigned int execution_time[30];
-  unsigned int period[30];
+// ------------------------------------------------------------------------- //
+// GLOBAL VARIABLES AND STRUCTS
+// ------------------------------------------------------------------------- //
+/*typedef struct {
+  unsigned int execution_time[20];
+  unsigned int period[20];
   GtkWidget *window;
   GtkWidget *entry;
   unsigned int number_tasks;
-  GtkWidget *c_entry[30];
-  GtkWidget *p_entry[30];
+  GtkWidget *c_entry[20];
+  GtkWidget *p_entry[20];
   GtkWidget *button_rm;
   GtkWidget *button_edf;
   GtkWidget *button_llf;
@@ -27,19 +31,12 @@ typedef struct {
   unsigned char rm;
   unsigned char edf;
   unsigned char llf;
-} configuration;
+} configuration;*/
 
-static void print_hello (GtkWidget *widget,
-                         gpointer   user_data)
+static void cb_generate_pdf (GtkWidget *widget,
+                             gpointer   user_data)
 {
-  g_print ("Hello World\n");
-}
-
-
-static void generate_tex (GtkWidget *widget,
-                          gpointer   user_data)
-{
-  int status = 1;
+  int status = 0;
   const gchar *entry_data;
   configuration* config = (configuration*) user_data;
   if (config->multiple_slides) g_print ("Multiple Slides\n");
@@ -48,7 +45,7 @@ static void generate_tex (GtkWidget *widget,
 
   if (!config->rm && !config->edf && !config->llf) {
     g_print ("Error: There hasn't been a selected algorithm\n");
-    status = 0;
+    status = 1;
   }
 
   // Parse entry data
@@ -70,7 +67,7 @@ static void generate_tex (GtkWidget *widget,
 
     if (config->execution_time[i] > config->period[i]) {
       g_print ("Error: Task ID %d has execution time greater than the period\n", i+1);
-      status = 0;
+      status = 1;
     }
   }
 
@@ -78,20 +75,22 @@ static void generate_tex (GtkWidget *widget,
   if (config->edf) g_print ("EDF Enabled\n");
   if (config->llf) g_print ("LLF Enabled\n");
 
+  if (!status) status = generate_pdf(*config);
+
   if (status) {
-    g_print ("Sucess: Generating .tex\n");
-  } else {
     g_print ("Error: Could generate .tex, please check the errors above\n");
+  } else {
+    g_print ("Sucess: Generating .tex\n");
   }
 }
 
-static void clear_entry (GtkWidget *widget,
+static void cb_clear_entry (GtkWidget *widget,
                          gpointer  user_data)
 {
   gtk_entry_set_text(GTK_ENTRY(widget), "");
 }
 
-static void toggle_bit (GtkWidget *widget,
+static void cb_toggle_bit (GtkWidget *widget,
                         gpointer   user_data)
 {
   unsigned char* bit = (unsigned char *) user_data;
@@ -115,13 +114,13 @@ static void table_content(GtkGrid *grid,
     config->c_entry[i] = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(config->c_entry[i]),"Execution Time");
     gtk_entry_set_icon_from_icon_name(GTK_ENTRY(config->c_entry[i]), GTK_ENTRY_ICON_SECONDARY, "edit-clear");
-    g_signal_connect (config->c_entry[i], "icon-press", G_CALLBACK (clear_entry), NULL);
+    g_signal_connect (config->c_entry[i], "icon-press", G_CALLBACK (cb_clear_entry), NULL);
     gtk_grid_attach (GTK_GRID (grid), config->c_entry[i], 10, i+1, 10, 1);
 
     config->p_entry[i] = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(config->p_entry[i]),"Period");
     gtk_entry_set_icon_from_icon_name(GTK_ENTRY(config->p_entry[i]), GTK_ENTRY_ICON_SECONDARY, "edit-clear");
-    g_signal_connect (config->p_entry[i], "icon-press", G_CALLBACK (clear_entry), NULL);
+    g_signal_connect (config->p_entry[i], "icon-press", G_CALLBACK (cb_clear_entry), NULL);
     gtk_grid_attach (GTK_GRID (grid), config->p_entry[i], 20, i+1, 10, 1);
   }
 }
@@ -169,15 +168,15 @@ static void setup_window (gpointer user_data)
   /* ----------------------------------------------------------------------- */
 
   config->button_rm = gtk_check_button_new_with_label ("RM");
-  g_signal_connect (config->button_rm, "toggled", G_CALLBACK (toggle_bit), &config->rm);
+  g_signal_connect (config->button_rm, "toggled", G_CALLBACK (cb_toggle_bit), &config->rm);
   gtk_grid_attach (GTK_GRID (grid), config->button_rm , 0, config->number_tasks+1, 10, 1);
 
   config->button_edf = gtk_check_button_new_with_label ("EDF");
-  g_signal_connect (config->button_edf, "toggled", G_CALLBACK (toggle_bit), &config->edf);
+  g_signal_connect (config->button_edf, "toggled", G_CALLBACK (cb_toggle_bit), &config->edf);
   gtk_grid_attach (GTK_GRID (grid), config->button_edf, 10, config->number_tasks+1, 10, 1);
 
   config->button_llf = gtk_check_button_new_with_label ("LLF");
-  g_signal_connect (config->button_llf, "toggled", G_CALLBACK (toggle_bit), &config->llf);
+  g_signal_connect (config->button_llf, "toggled", G_CALLBACK (cb_toggle_bit), &config->llf);
   gtk_grid_attach (GTK_GRID (grid), config->button_llf, 20, config->number_tasks+1, 10, 1);
 
   /* ----------------------------------------------------------------------- */
@@ -188,12 +187,12 @@ static void setup_window (gpointer user_data)
   config->button_ss = gtk_radio_button_new_with_label_from_widget (GTK_RADIO_BUTTON (config->button_ms), "Single Slide");
   gtk_grid_attach (GTK_GRID (grid), config->button_ss, 15, config->number_tasks+2, 15, 1);
 
-  g_signal_connect (config->button_ms, "clicked", G_CALLBACK (toggle_bit), &config->multiple_slides);
+  g_signal_connect (config->button_ms, "clicked", G_CALLBACK (cb_toggle_bit), &config->multiple_slides);
 
   /* ----------------------------------------------------------------------- */
 
   button = gtk_button_new_with_label ("Generate .pdf");
-  g_signal_connect (button, "clicked", G_CALLBACK (generate_tex), config);
+  g_signal_connect (button, "clicked", G_CALLBACK (cb_generate_pdf), config);
   gtk_grid_attach (GTK_GRID (grid), button, 0, config->number_tasks+3, 15, 1);
 
   button = gtk_button_new_with_label ("Quit");
@@ -262,7 +261,7 @@ static void init_window (GtkApplication *app,
   config->entry = gtk_entry_new();
   gtk_entry_set_placeholder_text(GTK_ENTRY(config->entry),"Number of tasks");
   gtk_entry_set_icon_from_icon_name(GTK_ENTRY(config->entry), GTK_ENTRY_ICON_SECONDARY, "edit-clear");
-  g_signal_connect (config->entry, "icon-press", G_CALLBACK (clear_entry), NULL);
+  g_signal_connect (config->entry, "icon-press", G_CALLBACK (cb_clear_entry), NULL);
   gtk_grid_attach (GTK_GRID (grid), config->entry, 2, 11, 2, 1);
 
   button = gtk_button_new_with_label ("Continue");
@@ -281,18 +280,22 @@ static void init_window (GtkApplication *app,
   gtk_widget_show_all (config->window);
 }
 
-int main (int argc, char **argv)
+void initial_conditions(configuration *config)
+{
+  config->number_tasks = 0;
+  config->multiple_slides = 0x01 ;
+  config->rm = 0x00 ;
+  config->edf = 0x00 ;
+  config->llf = 0x00 ;
+}
+
+int execute_gtk (int argc, char **argv)
 {
   GtkApplication *app;
   configuration config;
   int status;
 
-  config.number_tasks = 0;
-  config.multiple_slides = 0x01 ;
-  config.rm = 0x00 ;
-  config.edf = 0x00 ;
-  config.llf = 0x00 ;
-  if (config.multiple_slides) g_print ("Multiple Slides\n");
+  initial_conditions(&config);
 
   app = gtk_application_new ("project2.mp6117", G_APPLICATION_FLAGS_NONE);
   g_signal_connect (app, "activate", G_CALLBACK (init_window), &config);

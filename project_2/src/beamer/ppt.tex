@@ -1,6 +1,5 @@
-\documentclass{beamer}
+\documentclass[xcolor=table]{beamer}
 \usepackage[utf8]{inputenc}
-\usepackage{ifthen}
 
 \usetheme{Madrid}
 \usecolortheme{default}
@@ -28,13 +27,13 @@
 \date[August 2021] % (optional)
 {MP-6117 Real Time Operating Systems, August 2021}
 
-\logo{\includegraphics[height=0.5cm]{logo-tec.png}}
+\logo{\includegraphics[height=0.4cm]{beamer/logo-tec.png}}
 
 %End of title page configuration block
 %------------------------------------------------------------
 
 %------------------------------------------------------------
-%The next block of commands puts the table of contents at the 
+%The next block of commands puts the table of contents at the
 %beginning of each section and highlights the current section:
 
 \AtBeginSection[]
@@ -49,9 +48,6 @@
 
 \begin{document}
 
-\newcounter{rm}
-\setcounter{rm}{1}
-    
 %The next statement creates the title page.
 \frame{\titlepage}
 
@@ -69,7 +65,6 @@
 \section{Algorithms}
 
 %---------------------------------------------------------
-%Changing visivility of the text
 \begin{frame}
 \frametitle{Algorithms}
 In this project, we will study the following real time scheduling algorithms:
@@ -83,9 +78,7 @@ In this project, we will study the following real time scheduling algorithms:
 
 %---------------------------------------------------------
 
-\ifnum \value{rm}=1 {
 %---------------------------------------------------------
-%Highlighting text
 \begin{frame}
 \frametitle{Rate Monotonic (\textbf{RM})}
 
@@ -95,10 +88,26 @@ Rate monotonic is a priority assignment algorithm used in real-time operating sy
 
 \end{frame}
 %---------------------------------------------------------
-}
 
 %---------------------------------------------------------
-%Highlighting text
+\begin{frame}
+\frametitle{Rate Monotonic (\textbf{RM})}
+
+\begin{block}{Schedulability Test:}
+\begin{equation}
+\prod_{i=0}^{n} \left( \frac{E_i}{P_i}+1 \right) \leq 2
+\end{equation}
+
+\begin{itemize}
+    \item $E_i$: execution time of the task $i$.
+    \item $P_i$: period of the task $i$.
+\end{itemize}
+\end{block}
+
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
 \begin{frame}
 \frametitle{Earliest Deadline First (\textbf{EDF})}
 
@@ -110,7 +119,24 @@ Earliest Deadline First is a dynamic priority scheduling algorithm used in real-
 %---------------------------------------------------------
 
 %---------------------------------------------------------
-%Highlighting text
+\begin{frame}
+\frametitle{Earliest Deadline First (\textbf{EDF})}
+
+\begin{block}{Schedulability Test:}
+\begin{equation}
+\sum_{i=0}^{n} \left( \frac{E_i}{P_i} \right) \leq 1
+\end{equation}
+
+\begin{itemize}
+    \item $E_i$: execution time of the task $i$.
+    \item $P_i$: period of the task $i$.
+\end{itemize}
+\end{block}
+
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
 \begin{frame}
 \frametitle{Least Laxity First (\textbf{LLF})}
 
@@ -131,58 +157,64 @@ Least Laxity First  is a job level dynamic priority scheduling algorithm. It mea
 \end{frame}
 %---------------------------------------------------------
 
-\section{Rate Monotonic}
-
 %---------------------------------------------------------
-%Highlighting text
+\begin{frame}
+\frametitle{Least Laxity First (\textbf{LLF})}
+
+\begin{block}{Schedulability Test:}
+TODO: Missing equations
+\end{block}
+
+\end{frame}
+%---------------------------------------------------------
+\section{Rate Monotonic, Earliest Deadline Fist, Least Laxity First}
 \begin{frame}
 \frametitle{Schedulability Tests}
-
+\begin{table}[]
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Task ID} & \textbf{Execution Time} & \textbf{Period}\\ \hline
+\cellcolor[HTML]{ECF6CE}1 &\cellcolor[HTML]{ECF6CE}2 &\cellcolor[HTML]{ECF6CE}3 \\ \hline
+\cellcolor[HTML]{A4A4A4}2 &\cellcolor[HTML]{A4A4A4}1 &\cellcolor[HTML]{A4A4A4}2 \\ \hline
+\cellcolor[HTML]{F781D8}3 &\cellcolor[HTML]{F781D8}4 &\cellcolor[HTML]{F781D8}4 \\ \hline
+\cellcolor[HTML]{8181F7}4 &\cellcolor[HTML]{8181F7}5 &\cellcolor[HTML]{8181F7}6 \\ \hline
+\end{tabular}
+\end{table}
+\begin{itemize}
+\item RM
+\item LLF
+\end{itemize}
 \end{frame}
-%---------------------------------------------------------
-
-%---------------------------------------------------------
-%Highlighting text
 \begin{frame}
 \frametitle{Execution}
-
+\begin{itemize}
+\item RM
+\begin{table}[]
+\resizebox{0.8\textwidth}{0.1\textheight}{
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+\textbf{Task ID} & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} \\ \hline
+\cellcolor[HTML]{ECF6CE} \textbf{1} & \cellcolor[HTML]{ECF6CE} &  &  & X &  &  & X &  &  & X &  &  & X\\ \hline
+\cellcolor[HTML]{A4A4A4} \textbf{2} &  & \cellcolor[HTML]{A4A4A4} & X &  & X &  & X & \cellcolor[HTML]{A4A4A4} & X &  & X &  & X\\ \hline
+\cellcolor[HTML]{F781D8} \textbf{3} &  &  & \cellcolor[HTML]{F781D8} &  & X &  &  &  & X &  &  &  & X\\ \hline
+\cellcolor[HTML]{8181F7} \textbf{4} &  &  &  & \cellcolor[HTML]{8181F7} &  &  & X &  &  & \cellcolor[HTML]{8181F7} &  &  & X\\ \hline
+\end{tabular}
+}
+\end{table}
+\item LLF
+\begin{table}[]
+\resizebox{0.8\textwidth}{0.1\textheight}{
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+\textbf{Task ID} & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} \\ \hline
+\cellcolor[HTML]{ECF6CE} \textbf{1} & \cellcolor[HTML]{ECF6CE} &  &  & X &  &  & X &  &  & X &  &  & X\\ \hline
+\cellcolor[HTML]{A4A4A4} \textbf{2} &  & \cellcolor[HTML]{A4A4A4} & X &  & X &  & X & \cellcolor[HTML]{A4A4A4} & X &  & X &  & X\\ \hline
+\cellcolor[HTML]{F781D8} \textbf{3} &  &  & \cellcolor[HTML]{F781D8} &  & X &  &  &  & X &  &  &  & X\\ \hline
+\cellcolor[HTML]{8181F7} \textbf{4} &  &  &  & \cellcolor[HTML]{8181F7} &  &  & X &  &  & \cellcolor[HTML]{8181F7} &  &  & X\\ \hline
+\end{tabular}
+}
+\end{table}
+\end{itemize}
 \end{frame}
-%---------------------------------------------------------
-
-\section{Earliest Deadline First}
-
-%---------------------------------------------------------
-%Highlighting text
-\begin{frame}
-\frametitle{Schedulability Tests}
-
-\end{frame}
-%---------------------------------------------------------
-
-%---------------------------------------------------------
-%Highlighting text
-\begin{frame}
-\frametitle{Execution}
-
-\end{frame}
-%---------------------------------------------------------
-
-\section{Least Laxity First}
-
-%---------------------------------------------------------
-%Highlighting text
-\begin{frame}
-\frametitle{Schedulability Tests}
-
-\end{frame}
-%---------------------------------------------------------
-
-%---------------------------------------------------------
-%Highlighting text
-\begin{frame}
-\frametitle{Execution}
-
-\end{frame}
-%---------------------------------------------------------
 
 \end{document}
