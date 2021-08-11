@@ -1,9 +1,18 @@
+/*****************************************************************************
+* Project Name: Project 2: Real Time Scheduling                              *
+* File Name: llf.c                                                           *
+* University: Costa Rica Institute of Technology                             *
+* Lecture: MP-6117 Real Time Operating Systems                               *
+* Students: - David Martinez                                                 *
+*           - Jose Martinez                                                  *
+* Year: 2021                                                                 *
+******************************************************************************/
 #define _GNU_SOURCE
-#include<stddef.h>
-#include<stdio.h>
-#include<stdlib.h>
-#include "rm.c"
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <limits.h>
+#include "../include/structs.h"
 
 struct ExecutionContext{
     //Execution time
@@ -19,7 +28,7 @@ int ldfCompare(const void *a, const void *b, void * executionContext){
     struct Task *taskA = (struct Task *)a;
     struct Task *taskB = (struct Task *)b;
     struct ExecutionContext *context = (struct ExecutionContext *) executionContext;
-    
+
     unsigned int deadlineA = UINT_MAX;
     unsigned int deadlineB = UINT_MAX;
 
@@ -81,12 +90,12 @@ int createLeastLaxitudeFirst(struct Task * tasks, size_t num_tasks, struct Sched
         }
         else if (tasks[i].task_id == 0){
             printf("Error: task_id 0 is reserved for no task running\n");
-            return -1; 
+            return -1;
         }
     }
 
     //Copy the tasks into another array and reset the progress and mark them as waiting (all are ready to run)
-    for(int i = 0; i < num_tasks; i++){ 
+    for(int i = 0; i < num_tasks; i++){
         priorityTasks[i] = tasks[i];
         priorityTasks[i].progress = 0;
         priorityTasks[i].status = WAITING;
@@ -94,7 +103,7 @@ int createLeastLaxitudeFirst(struct Task * tasks, size_t num_tasks, struct Sched
     //Sort the input tasks based on their priority (shortest period first)
     qsort(priorityTasks,num_tasks, sizeof(struct Task), taskPriorityCompare);
 
-    
+
     //TODO:Compute the tests from [1] and [2]
 
     //Calculate the lcm of the periods to know for how long the simulation should run.
@@ -109,7 +118,7 @@ int createLeastLaxitudeFirst(struct Task * tasks, size_t num_tasks, struct Sched
     struct ScheduleTimeUnit schedule[run_period + 1];
     //Setup where the arrows will be set in the graph
     for(int i =0; i< run_period + 1; i++){
-        
+
         schedule[i].num_task_arrow = 0;
         for(int j =0; j< num_tasks; j++){
             if(i % priorityTasks[j].p == 0) {
@@ -135,7 +144,7 @@ int createLeastLaxitudeFirst(struct Task * tasks, size_t num_tasks, struct Sched
             }
         }
     }
-    //Tasks are arranged in meaning that the shortest deadline is first. 
+    //Tasks are arranged in meaning that the shortest deadline is first.
     //The running_task variable refers to the index of the array and not the task id.
     //Schedule the first task out of the loop
     //The first deadline also correlates with deadlines[0]
@@ -157,13 +166,13 @@ int createLeastLaxitudeFirst(struct Task * tasks, size_t num_tasks, struct Sched
         printf("\n\nt: %d\n", i);
 
         int deadlineMissed = 0;
-         
+
         //Check if any deadline was missed, if not, set the next in waiting priority
         for(int j =0; j < num_deadlines ; j++){
             if(deadlines[j].deadline == i){
                 for(int k = 0; k< num_tasks; k++){
                     if(priorityTasks[k].task_id == deadlines[j].task_id){
-                        if(priorityTasks[k].status == WAITING 
+                        if(priorityTasks[k].status == WAITING
                         || priorityTasks[k].status == RUNNING){
                             run_period = i-1;
                             deadlineMissed = 1;
@@ -179,7 +188,7 @@ int createLeastLaxitudeFirst(struct Task * tasks, size_t num_tasks, struct Sched
                                 //printf("t:%d deadline for task_id: %d\n",deadlines[l].deadline,deadlines[l].task_id);
                         }
                     }
-                      
+
                 }
 
             }
@@ -228,12 +237,14 @@ int createLeastLaxitudeFirst(struct Task * tasks, size_t num_tasks, struct Sched
     return run_period +1;
 }
 
+
+/*
 int main(){
     struct Task tasks[3];
     struct ScheduleTimeUnit schedule[1024];
     int schedulePeriod = 0;
     //Scheludable scenario
-    
+
     tasks[0].task_id = 1;
     tasks[0].c = 2;
     tasks[0].p = 6;
@@ -245,7 +256,7 @@ int main(){
     tasks[2].task_id = 3;
     tasks[2].c = 3;
     tasks[2].p = 10;
-    
+
 
     //Unschedulable scenario.
     /*
@@ -257,6 +268,8 @@ int main(){
     tasks[1].c = 4;
     tasks[1].p = 9;
     */
+
+    /*
     schedulePeriod = createLeastLaxitudeFirst(tasks, 3, schedule);
     printf("Reading from the retrurned schedule\n");
     for(int i =0; i< schedulePeriod; i++){
@@ -267,7 +280,7 @@ int main(){
             }
         }
     }
-    
+
     return 0;
 
-}
+}*/

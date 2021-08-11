@@ -1,27 +1,31 @@
+/*****************************************************************************
+* Project Name: Project 2: Real Time Scheduling                              *
+* File Name: rm.c                                                            *
+* University: Costa Rica Institute of Technology                             *
+* Lecture: MP-6117 Real Time Operating Systems                               *
+* Students: - David Martinez                                                 *
+*           - Jose Martinez                                                  *
+* Year: 2021                                                                 *
+******************************************************************************/
 #include<stddef.h>
 #include<stdio.h>
 #include<stdlib.h>
-//There's a hard limit on 256 tasks
-//The progress of the task is the amount of computation time that the task already had.
-//task_id 0 is reserved for no task running
-enum task_status{WAITING, RUNNING, COMPLETED};
-struct Task{
-    unsigned int task_id;
-    unsigned int c;
-    unsigned int p;
-    unsigned int progress;
-    enum task_status status;
+#include "../include/structs.h"
 
-};
-struct ScheduleTimeUnit{
-    unsigned int task_id;
-    size_t num_task_arrow;
-    unsigned int arrow_task_ids[256];
-};
-struct Deadlines{
-    unsigned int task_id;
-    unsigned int deadline;
-};
+// ------------------------------------------------------------------------- //
+// FUNCTIONS
+// ------------------------------------------------------------------------- //
+
+float rm_schedulabity(configuration config)
+{
+  float U = (float)config.execution_time[0]/(float)config.period[0] + 1.0;
+  for(unsigned int i=1; i<config.number_tasks; i++)
+  {
+    U *= ((float)config.execution_time[i]/(float)config.period[i] + 1.0);
+  }
+  return U;
+}
+
 //Function to compare taks priority
 int taskPriorityCompare(const void *a, const void *b){
     struct Task *taskA = (struct Task *)a;
@@ -36,10 +40,9 @@ int lcm(int a, int b){
     return m;
 }
 
-
 // Function should return the schedule for the rate monotonic given the provided tasks.
 // task id for the array of tasks should be unique.
-// There should be at least one task. 
+// There should be at least one task.
 // For all tasks p >= c
 int createRateMonotonicSchedule(struct Task * tasks, size_t num_tasks, struct ScheduleTimeUnit * o_schedule){
     struct Task priorityTasks[num_tasks];
@@ -62,12 +65,12 @@ int createRateMonotonicSchedule(struct Task * tasks, size_t num_tasks, struct Sc
         }
         else if (tasks[i].task_id == 0){
             printf("Error: task_id 0 is reserved for no task running\n");
-            return -1; 
+            return -1;
         }
     }
 
     //Copy the tasks into another array and reset the progress and mark them as waiting (all are ready to run)
-    for(int i = 0; i < num_tasks; i++){ 
+    for(int i = 0; i < num_tasks; i++){
         priorityTasks[i] = tasks[i];
         priorityTasks[i].progress = 0;
         priorityTasks[i].status = WAITING;
@@ -121,7 +124,7 @@ int createRateMonotonicSchedule(struct Task * tasks, size_t num_tasks, struct Sc
     priorityTasks[running_task].status = RUNNING;
     priorityTasks[running_task].progress += 1;
     schedule[0].task_id = priorityTasks[running_task].task_id;
-    
+
     if(priorityTasks[running_task].c == priorityTasks[running_task].progress){
         priorityTasks[running_task].progress = 0;
         priorityTasks[running_task].status = COMPLETED;
@@ -132,12 +135,12 @@ int createRateMonotonicSchedule(struct Task * tasks, size_t num_tasks, struct Sc
         //Check if any task has reached a deadline and update the tasks to the running state.
         int deadlineMissed = 0;
         for(int j = 0; j< num_deadlines; j++){
-            
+
             if(deadlines[j].deadline == i){
                 printf("Deadline: %d, task_id: %d\n",deadlines[j].deadline, deadlines[j].task_id);
                 for(int k = 0; k < num_tasks; k++){
                    if(priorityTasks[k].task_id ==  deadlines[j].task_id){
-                       if(priorityTasks[k].status == WAITING 
+                       if(priorityTasks[k].status == WAITING
                         || priorityTasks[k].status == RUNNING){
                             //Deadline was reached. Abort and stop scheduling.
                             run_period = i-1; //Not sure if i or i-1
@@ -149,8 +152,8 @@ int createRateMonotonicSchedule(struct Task * tasks, size_t num_tasks, struct Sc
                        else{
                            priorityTasks[k].status = WAITING;
                        }
-                   }  
-                }                 
+                   }
+                }
             }
         }
         if(deadlineMissed) break;
@@ -192,3 +195,50 @@ int createRateMonotonicSchedule(struct Task * tasks, size_t num_tasks, struct Sc
     return run_period +1;
 
 }
+
+/*
+int main(){
+    struct Task tasks[3];
+    struct ScheduleTimeUnit schedule[255];
+    int schedulePeriod = 0;
+    //Scheludable scenario
+
+    tasks[0].task_id = 1;
+    tasks[0].c = 1;
+    tasks[0].p = 6;
+
+    tasks[1].task_id = 2;
+    tasks[1].c = 2;
+    tasks[1].p = 9;
+
+    tasks[2].task_id = 3;
+    tasks[2].c = 6;
+    tasks[2].p = 18;
+
+
+    //Unschedulable scenario.
+    /*
+    tasks[0].task_id = 1;
+    tasks[0].c = 3;
+    tasks[0].p = 6;
+
+    tasks[1].task_id = 2;
+    tasks[1].c = 4;
+    tasks[1].p = 9;
+    */
+    /*
+    schedulePeriod = createRateMonotonicSchedule(tasks, 3, schedule);
+    printf("Reading from the retrurned schedule\n");
+    for(int i =0; i< schedulePeriod; i++){
+        printf("t: %d. task: %d\n", i, schedule[i].task_id);
+        if(schedule[i].num_task_arrow != 0){
+            for(int j = 0; j< schedule[i].num_task_arrow; j++){
+                printf("Arrow at t: %d for task_id:%d\n", i, schedule[i].arrow_task_ids[j]);
+            }
+        }
+    }
+
+    return 0;
+
+}
+*/
