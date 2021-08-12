@@ -24,6 +24,17 @@ struct ExecutionContext{
 
 };
 
+float llf_schedulabity(configuration config)
+{
+  float U = 0.0;
+  for(unsigned int i=0; i<config.number_tasks; i++)
+  {
+    U += (float)config.execution_time[i]/(float)config.period[i];
+  }
+  return U;
+}
+
+
 int ldfCompare(const void *a, const void *b, void * executionContext){
     struct Task *taskA = (struct Task *)a;
     struct Task *taskB = (struct Task *)b;

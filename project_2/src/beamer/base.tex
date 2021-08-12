@@ -18,7 +18,7 @@
 {
   \inst{1}%
   \url{david.martinez@estudiantec.cr}\\
-  \textsc{2007058596}
+  \textsc{2013005337}
   \and
   \inst{2}%
   \url{jpmh.1309@estudiantec.cr} \\
@@ -163,7 +163,14 @@ Least Laxity First  is a job level dynamic priority scheduling algorithm. It mea
 \frametitle{Least Laxity First (\textbf{LLF})}
 
 \begin{block}{Schedulability Test:}
-TODO: Missing equations
+\begin{equation}
+\sum_{i=0}^{n} \left( \frac{E_i}{P_i} \right) \leq 1
+\end{equation}
+
+\begin{itemize}
+    \item $E_i$: execution time of the task $i$.
+    \item $P_i$: period of the task $i$.
+\end{itemize}
 \end{block}
 
 \end{frame}
