@@ -93,7 +93,15 @@ void schedulability_create_ppt(FILE* file, enum algorithm scheduling, configurat
 
   if (scheduling == LLF)
   {
-    fputs("TODO: Missing equations\n", file);
+    U = llf_schedulabity(config);
+    fputs("\\begin{equation}\n", file);
+    fputs("\\sum_{i=0}^{n} \\left( \\frac{E_i}{P_i} \\right) \\leq 1 \\rightarrow", file);
+    fprintf(file, "%f \\leq 1\n", U);
+    fputs("\\end{equation}\n", file);
+    fputs("\\begin{itemize}\n", file);
+    if (U>1) fputs("\\item Failed", file);
+    else fputs("\\item Passed", file);
+    fputs("\\end{itemize}\n", file);
   }
 }
 
