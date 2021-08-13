@@ -110,6 +110,7 @@ void execution_create_ppt(FILE* file, enum algorithm scheduling, configuration c
   unsigned int schedule_len;
   struct Task tasks[config.number_tasks];
   struct ScheduleTimeUnit timeline[255];
+  unsigned int task_id;
   unsigned int lcm = calculate_lcm(config.period, config.number_tasks);
 
   for (unsigned int i= 0; i<config.number_tasks; i++)
@@ -145,14 +146,18 @@ void execution_create_ppt(FILE* file, enum algorithm scheduling, configuration c
     fprintf(file, "\\cellcolor[HTML]{%s} \\textbf{%d}", color[i], i+1);
     for(unsigned int j=0; j<schedule_len+1; j++)
     {
-      if(j!=0 && j%config.period[i]==0 && (i+1) == timeline[j].task_id)
+      if (j==lcm) task_id = timeline[0].task_id;
+      else if (j==(lcm+1)) task_id = timeline[1].task_id;
+      else task_id = timeline[j].task_id;
+
+      if(j!=0 && j%config.period[i]==0 && (i+1) == task_id)
       {
         fprintf(file, " & \\cellcolor[HTML]{%s} $\\blacktriangleleft$", color[i]);
       }
       else if(j!=0 && j%config.period[i]==0)
       {
         fputs(" & $\\blacktriangleleft$", file);
-      } else if ((i+1) == timeline[j].task_id)
+      } else if ((i+1) == task_id)
       {
         fprintf(file, " & \\cellcolor[HTML]{%s}", color[i]);
       } else
